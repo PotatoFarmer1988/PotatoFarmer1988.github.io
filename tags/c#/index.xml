@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>C# on Weichao Wang</title>
+    <link>https://sp958857.github.io/tags/c#/</link>
+    <description>Recent content in C# on Weichao Wang</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 25 Mar 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://sp958857.github.io/tags/c#/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何优雅的在Unity中发送REST API请求</title>
+      <link>https://sp958857.github.io/post/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%9C%A8unity%E4%B8%AD%E5%8F%91%E9%80%81rest-api%E8%AF%B7%E6%B1%82/</link>
+      <pubDate>Sun, 25 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://sp958857.github.io/post/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%9C%A8unity%E4%B8%AD%E5%8F%91%E9%80%81rest-api%E8%AF%B7%E6%B1%82/</guid>
+      <description>如何优雅的在Unity中发送REST API请求 作者:sp958857 在Unity中经常使用的网络请求模块，有官方的UnityWebReque</description>
+    </item>
+    
+  </channel>
+</rss>
