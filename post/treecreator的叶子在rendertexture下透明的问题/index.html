@@ -38,13 +38,13 @@
 
     <link rel="canonical" href="/post/treecreator%E7%9A%84%E5%8F%B6%E5%AD%90%E5%9C%A8rendertexture%E4%B8%8B%E9%80%8F%E6%98%8E%E7%9A%84%E9%97%AE%E9%A2%98/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
     
     <link rel="stylesheet" href="/css/zanshang.css">
@@ -72,7 +72,9 @@
 
 
 
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -150,7 +152,9 @@
         background-image: url('https://acg.yanwz.cn/scenery/api.php')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -169,15 +173,17 @@
                     <h1>TreeCreator的叶子在RenderTexture下透明度异常的问题</h1>
                     <h2 class="subheading">RenderTexture中的树叶为什么发白？</h2>
                     <span class="meta">
-                        Posted by 
                         
-                                &#34;sp958857&#34;
-                         
-                        on 
-                        Sunday, April 7, 2019
-                        
-                        
-                        
+                            Posted by 
+                            
+                                    &#34;sp958857&#34;
+                             
+                            on 
+                            Sunday, April 7, 2019
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -194,40 +200,10 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
-                
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#treecreator的叶子在rendertexture下透明度异常的问题">TreeCreator的叶子在RenderTexture下透明度异常的问题</a>
-      <ul>
-        <li><a href="#利用frame-debugger排查">利用Frame Debugger排查</a></li>
-        <li><a href="#利用graphic-debugger进行验证">利用Graphic Debugger进行验证</a>
-          <ul>
-            <li><a href="#a先看rendertexture还未在rawimage显示前的渲染事件">A.先看RenderTexture还未在RawImage显示前的渲染事件</a>
-              <ul>
-                <li><a href="#1-背景是skybox的叶子">1 背景是SkyBox的叶子：</a></li>
-                <li><a href="#2-背景是quad的叶子">2 背景是Quad的叶子：</a></li>
-              </ul>
-            </li>
-            <li><a href="#b再看rendertexture渲染到rawimage时的事件">B.再看RenderTexture渲染到RawImage时的事件</a>
-              <ul>
-                <li><a href="#1-背景是skybox的叶子-1">1 背景是SkyBox的叶子：</a></li>
-                <li><a href="#2-背景是quad的叶子-1">2 背景是Quad的叶子：</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#如果解决">如果解决？</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
                 
                 <h1 id="treecreator的叶子在rendertexture下透明度异常的问题">TreeCreator的叶子在RenderTexture下透明度异常的问题</h1>
 <p>使用Unity Tree Creator创建的Tree，在场景中使用相机实时渲染到RenderTexture上，并在RawImage中显示的，结果如图所示：<br>
@@ -310,16 +286,30 @@
                     
                     
                 </ul>
-
                 
-<div id="disqus-comment"></div>
-
-
 
             </div>
+
+            
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -396,7 +386,7 @@
             
                 </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Weichao Wang 2021
+                    Copyright &copy; Weichao Wang 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -453,6 +443,67 @@
 
 
 
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
 
 
 </body>

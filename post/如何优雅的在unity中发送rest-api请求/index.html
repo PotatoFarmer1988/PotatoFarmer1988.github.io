@@ -38,13 +38,13 @@
 
     <link rel="canonical" href="/post/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%9C%A8unity%E4%B8%AD%E5%8F%91%E9%80%81rest-api%E8%AF%B7%E6%B1%82/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
     
     <link rel="stylesheet" href="/css/zanshang.css">
@@ -72,7 +72,9 @@
 
 
 
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -150,7 +152,9 @@
         background-image: url('https://acg.yanwz.cn/scenery/api.php')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -169,15 +173,17 @@
                     <h1>如何优雅的在Unity中发送REST API请求</h1>
                     <h2 class="subheading">如何快速编写业务api，又不依赖于具体的第三方网络库</h2>
                     <span class="meta">
-                        Posted by 
                         
-                                &#34;sp958857&#34;
-                         
-                        on 
-                        Sunday, March 25, 2018
-                        
-                        
-                        
+                            Posted by 
+                            
+                                    &#34;sp958857&#34;
+                             
+                            on 
+                            Sunday, March 25, 2018
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -194,86 +200,35 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
                 
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#如何优雅的在unity中发送rest-api请求">如何优雅的在Unity中发送REST API请求</a></li>
-    <li><a href="#retrofit-for-unity">Retrofit for Unity</a>
-      <ul>
-        <li><a href="#简介">简介</a></li>
-        <li><a href="#如何使用">如何使用</a></li>
-        <li><a href="#api-声明">API 声明</a>
-          <ul>
-            <li><a href="#请求方式">请求方式</a></li>
-            <li><a href="#url动态组装">URL动态组装</a></li>
-            <li><a href="#带body的请求">带BODY的请求</a></li>
-            <li><a href="#form-encoded请求">FORM ENCODED请求</a></li>
-            <li><a href="#header-的组装">HEADER 的组装</a></li>
-          </ul>
-        </li>
-        <li><a href="#retrofit-配置">Retrofit 配置</a>
-          <ul>
-            <li><a href="#序列化和反序列化配置">序列化和反序列化配置</a></li>
-          </ul>
-        </li>
-        <li><a href="#结合rx的异步网络请求实践">结合Rx的异步网络请求实践</a>
-          <ul>
-            <li><a href="#schedulerlinq多线程请求与切换">Scheduler+Linq多线程请求与切换</a>
-              <ul>
-                <li><a href="#使用scheduler完成多线程请求与回调切换">使用Scheduler完成多线程请求与回调切换</a></li>
-                <li><a href="#使用linq扩展操作符简化开发">使用Linq扩展操作符简化开发</a>
-                  <ul>
-                    <li><a href="#线程串联">线程串联</a></li>
-                    <li><a href="#线程合并">线程合并</a></li>
-                    <li><a href="#更多操作符">更多操作符</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#与不同http模块的结合">与不同Http模块的结合</a>
-          <ul>
-            <li><a href="#与-besthttp的结合使用">与 BESTHTTP的结合使用</a></li>
-            <li><a href="#与-unitywebrequest的结合">与 UNITYWEBREQUEST的结合</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-                
                 <h1 id="如何优雅的在unity中发送rest-api请求">如何优雅的在Unity中发送REST API请求</h1>
 <p><a href="https://github.com/sp958857">作者:sp958857</a></p>
 <p>在Unity中经常使用的网络请求模块，有官方的UnityWebRequest模块，BestHttp第三方插件等。他们的使用方式都大同小异，通过Url的拼接处理，提供各种方法来应对REST请求的各种模式（Get/Post/Delete/Patch）与参数，使用的代码如下</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#6272a4">//BestHttp
-</span><span style="color:#6272a4"></span>HTTPRequest request = <span style="color:#ff79c6">new</span> HTTPRequest(<span style="color:#ff79c6">new</span> Uri(<span style="color:#f1fa8c">&#34;http://server.com/path&#34;</span>),HTTPMethods.Post,OnRequestFinished);
-	request.AddField(<span style="color:#f1fa8c">&#34;FieldName&#34;</span>, <span style="color:#f1fa8c">&#34;Field Value&#34;</span>);
-	request.Send();
-</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#6272a4">//official UnityWebRequest module
-</span><span style="color:#6272a4"></span> WWWForm form = <span style="color:#ff79c6">new</span> WWWForm();
-        form.AddField(<span style="color:#f1fa8c">&#34;myField&#34;</span>, <span style="color:#f1fa8c">&#34;myData&#34;</span>);
-        <span style="color:#ff79c6">using</span> (UnityWebRequest www = UnityWebRequest.Post(<span style="color:#f1fa8c">&#34;http://www.my-server.com/myform&#34;</span>, form))
-        {
-            <span style="color:#ff79c6">yield</span> <span style="color:#ff79c6">return</span> www.SendWebRequest();
-
-            <span style="color:#ff79c6">if</span> (www.isNetworkError || www.isHttpError)
-            {
-                Debug.Log(www.error);
-            }
-            <span style="color:#ff79c6">else</span>
-            {
-                Debug.Log(<span style="color:#f1fa8c">&#34;Form upload complete!&#34;</span>);
-            }
-        }
-</code></pre></div><p>如果项目中的REST API请求的数量变大的情况下，就会出现几钟情况：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#6272a4">//BestHttp</span>
+</span></span><span style="display:flex;"><span>HTTPRequest request = <span style="color:#ff79c6">new</span> HTTPRequest(<span style="color:#ff79c6">new</span> Uri(<span style="color:#f1fa8c">&#34;http://server.com/path&#34;</span>),HTTPMethods.Post,OnRequestFinished);
+</span></span><span style="display:flex;"><span>	request.AddField(<span style="color:#f1fa8c">&#34;FieldName&#34;</span>, <span style="color:#f1fa8c">&#34;Field Value&#34;</span>);
+</span></span><span style="display:flex;"><span>	request.Send();
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#6272a4">//official UnityWebRequest module</span>
+</span></span><span style="display:flex;"><span> WWWForm form = <span style="color:#ff79c6">new</span> WWWForm();
+</span></span><span style="display:flex;"><span>        form.AddField(<span style="color:#f1fa8c">&#34;myField&#34;</span>, <span style="color:#f1fa8c">&#34;myData&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">using</span> (UnityWebRequest www = UnityWebRequest.Post(<span style="color:#f1fa8c">&#34;http://www.my-server.com/myform&#34;</span>, form))
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">yield</span> <span style="color:#ff79c6">return</span> www.SendWebRequest();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (www.isNetworkError || www.isHttpError)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Debug.Log(www.error);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">else</span>
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Debug.Log(<span style="color:#f1fa8c">&#34;Form upload complete!&#34;</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><p>如果项目中的REST API请求的数量变大的情况下，就会出现几钟情况：</p>
 <ul>
 <li>Http请求的代码的代码分散在工程中</li>
 <li>如果把请求代码集中放置，这个类会非常巨大，将包含各种涉及底层请求模块的代码，如<code>www.SendWebRequest()</code>和<code>request.AddField(&quot;FieldName&quot;, &quot;Field Value&quot;);</code></li>
@@ -289,146 +244,146 @@
 下面着重介绍下该模块的使用方式。</p>
 <h2 id="简介">简介</h2>
 <p>Retrofit for Unity把Http API描述变成接口直接使用。下面是一个REST API的接口化定义</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"> <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">interface</span> IHttpBinInterface
-    {
-<span style="color:#50fa7b">        [Get(&#34;/get&#34;)]</span>
-        IObservable&lt;HttpBinResponse&gt; Get(
-<span style="color:#50fa7b">            [Query(&#34;query1&#34;)]</span><span style="color:#8be9fd">string</span> arg1,
-<span style="color:#50fa7b">            [Query(&#34;query2&#34;)]</span><span style="color:#8be9fd">string</span> arg2
-            );
-     }
-</code></pre></div><h2 id="如何使用">如何使用</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span> <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">interface</span> <span style="color:#50fa7b">IHttpBinInterface</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">        [Get(&#34;/get&#34;)]</span>
+</span></span><span style="display:flex;"><span>        IObservable&lt;HttpBinResponse&gt; Get(
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">            [Query(&#34;query1&#34;)]</span><span style="color:#8be9fd">string</span> arg1,
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">            [Query(&#34;query2&#34;)]</span><span style="color:#8be9fd">string</span> arg2
+</span></span><span style="display:flex;"><span>            );
+</span></span><span style="display:flex;"><span>     }
+</span></span></code></pre></div><h2 id="如何使用">如何使用</h2>
 <p>3个步骤：<br>
 -<strong>[1] 定义一个Interface</strong>:该接口用来管理你的 HTTP API。<br>
 -<strong>[2] 继承 RestAdapter 并实现该接口</strong>: 在接口方法实现中只需要调用 <code>SendRequest(args...)</code> 即可。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#ff79c6">public</span> <span style="color:#ff79c6">class</span> <span style="color:#50fa7b">HttpBinService</span>:RestAdapter,IHttpBinInterface
-    {
-        <span style="color:#ff79c6">private</span> <span style="color:#ff79c6">static</span> HttpBinService <span style="color:#bd93f9">_</span>instance;
-
-        <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> HttpBinService Instance
-        {
-            <span style="color:#ff79c6">get</span>
-            {
-                <span style="color:#ff79c6">if</span> (<span style="color:#bd93f9">_</span>instance == <span style="color:#ff79c6">null</span>)
-                {
-                    <span style="color:#8be9fd">var</span> go = <span style="color:#ff79c6">new</span> GameObject(<span style="color:#f1fa8c">&#34;HttpBinService&#34;</span>);
-                    <span style="color:#bd93f9">_</span>instance = go.AddComponent&lt;HttpBinService&gt;();
-                }
-                <span style="color:#ff79c6">return</span> <span style="color:#bd93f9">_</span>instance;
-            }
-        }
-  
-        <span style="color:#ff79c6">protected</span> <span style="color:#ff79c6">override</span> HttpImplement SetHttpImpl()
-        {
-            <span style="color:#8be9fd">var</span> httpImpl = <span style="color:#ff79c6">new</span> HttpClientImpl();
-            httpImpl.EnableDebug = <span style="color:#ff79c6">true</span>;
-            <span style="color:#ff79c6">return</span> httpImpl;
-        }
-
-        <span style="color:#ff79c6">protected</span> <span style="color:#ff79c6">override</span> <span style="color:#ff79c6">void</span> SetRestAPI()
-        {
-            baseUrl = <span style="color:#f1fa8c">&#34;http://httpbin.org&#34;</span>;
-            iRestInterface = <span style="color:#ff79c6">typeof</span> (IHttpBinInterface);
-        }
-
-
-        <span style="color:#ff79c6">public</span> IObservable&lt;HttpBinResponse&gt; Get(<span style="color:#8be9fd">string</span> arg1, <span style="color:#8be9fd">string</span> arg2)
-        {
-            <span style="color:#ff79c6">return</span> SendRequest&lt;HttpBinResponse&gt;(arg1,arg2) <span style="color:#ff79c6">as</span> IObservable&lt;HttpBinResponse&gt;;
-        }
-    }
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#ff79c6">public</span> <span style="color:#ff79c6">class</span> <span style="color:#50fa7b">HttpBinService</span>:RestAdapter,IHttpBinInterface
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">private</span> <span style="color:#ff79c6">static</span> HttpBinService <span style="color:#bd93f9">_</span>instance;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> HttpBinService Instance
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">get</span>
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> (<span style="color:#bd93f9">_</span>instance == <span style="color:#ff79c6">null</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#8be9fd">var</span> go = <span style="color:#ff79c6">new</span> GameObject(<span style="color:#f1fa8c">&#34;HttpBinService&#34;</span>);
+</span></span><span style="display:flex;"><span>                    <span style="color:#bd93f9">_</span>instance = go.AddComponent&lt;HttpBinService&gt;();
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">return</span> <span style="color:#bd93f9">_</span>instance;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">protected</span> <span style="color:#ff79c6">override</span> HttpImplement SetHttpImpl()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">var</span> httpImpl = <span style="color:#ff79c6">new</span> HttpClientImpl();
+</span></span><span style="display:flex;"><span>            httpImpl.EnableDebug = <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> httpImpl;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">protected</span> <span style="color:#ff79c6">override</span> <span style="color:#ff79c6">void</span> SetRestAPI()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            baseUrl = <span style="color:#f1fa8c">&#34;http://httpbin.org&#34;</span>;
+</span></span><span style="display:flex;"><span>            iRestInterface = <span style="color:#ff79c6">typeof</span> (IHttpBinInterface);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">public</span> IObservable&lt;HttpBinResponse&gt; Get(<span style="color:#8be9fd">string</span> arg1, <span style="color:#8be9fd">string</span> arg2)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> SendRequest&lt;HttpBinResponse&gt;(arg1,arg2) <span style="color:#ff79c6">as</span> IObservable&lt;HttpBinResponse&gt;;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><blockquote>
 <p>在Java版本的Retrofit中不需要这一步的原因就是使用了类的动态代理:<br>
 <code>GitHubService service = retrofit.create(GitHubService.class);//GitHubService为Interface</code><br>
 由于语言特性的差别，C#没有这个特性，且Unity中官方请求模块UnityWebRequest和WWW都是基于协程实现的，而协程只能在MonoBehavior中使用，因此为了兼容官方模块，RestAdapter作为通用基类适配器需要继承MonoBehavior，业务请求服务直接继承RestAdapter，并实现REST接口的方法。</p>
 </blockquote>
 <p>-<strong>[3] 调用方法</strong>: HttpBinService将负责把你的方法调用变成向服务端发送的Http网络请求。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"> <span style="color:#8be9fd">var</span> ob = HttpBinService.Instance.Get(<span style="color:#f1fa8c">&#34;abc&#34;</span>, <span style="color:#f1fa8c">&#34;123&#34;</span>);
-     ob.SubscribeOn(Scheduler.ThreadPool)<span style="color:#6272a4">//send request in sub thread
-</span><span style="color:#6272a4"></span>          .ObserveOn(Scheduler.MainThread)<span style="color:#6272a4">//receive response in main thread
-</span><span style="color:#6272a4"></span>          .Subscribe(data =&gt;
-              {
-                   <span style="color:#6272a4">// onSuccess
-</span><span style="color:#6272a4"></span>                   Debug.LogFormat(<span style="color:#f1fa8c">&#34;Received on threadId:{0}&#34;</span>, Thread.CurrentThread.ManagedThreadId);
-              },
-              error =&gt;
-              {
-                  Debug.Log(<span style="color:#f1fa8c">&#34;Retrofit Error:&#34;</span> + error);
-              });
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span> <span style="color:#8be9fd">var</span> ob = HttpBinService.Instance.Get(<span style="color:#f1fa8c">&#34;abc&#34;</span>, <span style="color:#f1fa8c">&#34;123&#34;</span>);
+</span></span><span style="display:flex;"><span>     ob.SubscribeOn(Scheduler.ThreadPool)<span style="color:#6272a4">//send request in sub thread</span>
+</span></span><span style="display:flex;"><span>          .ObserveOn(Scheduler.MainThread)<span style="color:#6272a4">//receive response in main thread</span>
+</span></span><span style="display:flex;"><span>          .Subscribe(data =&gt;
+</span></span><span style="display:flex;"><span>              {
+</span></span><span style="display:flex;"><span>                   <span style="color:#6272a4">// onSuccess</span>
+</span></span><span style="display:flex;"><span>                   Debug.LogFormat(<span style="color:#f1fa8c">&#34;Received on threadId:{0}&#34;</span>, Thread.CurrentThread.ManagedThreadId);
+</span></span><span style="display:flex;"><span>              },
+</span></span><span style="display:flex;"><span>              error =&gt;
+</span></span><span style="display:flex;"><span>              {
+</span></span><span style="display:flex;"><span>                  Debug.Log(<span style="color:#f1fa8c">&#34;Retrofit Error:&#34;</span> + error);
+</span></span><span style="display:flex;"><span>              });
+</span></span></code></pre></div><blockquote>
 <p>在Java版本的Retrofit中借助RxJava来实现异步的请求。好在Unity版本中也有Reactive Extension的扩展 <a href="https://github.com/neuecc/UniRx"><code>UniRx</code></a>，借助UniRx,可以快速实现Retrofit for Unity的异步请求。</p>
 </blockquote>
 <h2 id="api-声明">API 声明</h2>
 <p>在接口的方法中使用C# 特性来标识一个请求将被怎么发送，特性可以被标识在方法和方法参数上。</p>
 <h3 id="请求方式">请求方式</h3>
 <p>每一个方法必须要有一个Http方法类型的特性来提供请求方式以及相对地址，该组件提供6种内置的特性来标识GET, POST, PUT, DELETE, PATCH and HEAD请求，相对地址在特性中标识即可。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b"> [Get(&#34;/users&#34;)]</span>
-</code></pre></div><p>当然，也可以直接在URL地址中使用查询URL。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b">[GET(&#34;/users/list?sort=desc&#34;)]</span>
-</code></pre></div><h3 id="url动态组装">URL动态组装</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b"> [Get(&#34;/users&#34;)]</span>
+</span></span></code></pre></div><p>当然，也可以直接在URL地址中使用查询URL。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b">[GET(&#34;/users/list?sort=desc&#34;)]</span>
+</span></span></code></pre></div><h3 id="url动态组装">URL动态组装</h3>
 <p>URL可以通过中括号+变量名来动态组装，如<code>{</code>any string<code>}</code>,同时，用来动态替换URL的参数必须使用 [Path]特性来标识，并且需要使用相同的string值。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b">[Get(&#34;/group/{id}/users&#34;)]</span>
-IObservable&lt;&lt;List&lt;User&gt;&gt; GetList(
-<span style="color:#50fa7b">    [Path(&#34;id&#34;)]</span> <span style="color:#8be9fd">int</span> groupId);
-</code></pre></div><p>Query查询语句也可以使用同样的方式来组装动态查询URL。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b">[Get(&#34;/group/{id}/users&#34;)]</span>
-IObservable&lt;&lt;List&lt;User&gt;&gt; GetList(
-<span style="color:#50fa7b">    [Path(&#34;id&#34;)]</span> <span style="color:#8be9fd">int</span> groupId,
-<span style="color:#50fa7b">    [Query(&#34;sort&#34;)]</span> <span style="color:#8be9fd">string</span> sort);
-</code></pre></div><p>对于更复杂的查询，建议使用QueryMap来实现。并且通过这种方式可以实现数量可变的查询URL。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b">[Get(&#34;/group/{id}/users&#34;)]</span>
-IObservable&lt;&lt;List&lt;User&gt;&gt;GroupList(
-<span style="color:#50fa7b">    [Path(&#34;id&#34;)]</span> <span style="color:#8be9fd">int</span> groupId,
-<span style="color:#50fa7b">    [QueryMap]</span> Dictionary&lt;<span style="color:#8be9fd">string</span>, <span style="color:#8be9fd">string</span>&gt; options);
-</code></pre></div><h3 id="带body的请求">带BODY的请求</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b">[Get(&#34;/group/{id}/users&#34;)]</span>
+</span></span><span style="display:flex;"><span>IObservable&lt;&lt;List&lt;User&gt;&gt; GetList(
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">    [Path(&#34;id&#34;)]</span> <span style="color:#8be9fd">int</span> groupId);
+</span></span></code></pre></div><p>Query查询语句也可以使用同样的方式来组装动态查询URL。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b">[Get(&#34;/group/{id}/users&#34;)]</span>
+</span></span><span style="display:flex;"><span>IObservable&lt;&lt;List&lt;User&gt;&gt; GetList(
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">    [Path(&#34;id&#34;)]</span> <span style="color:#8be9fd">int</span> groupId,
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">    [Query(&#34;sort&#34;)]</span> <span style="color:#8be9fd">string</span> sort);
+</span></span></code></pre></div><p>对于更复杂的查询，建议使用QueryMap来实现。并且通过这种方式可以实现数量可变的查询URL。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b">[Get(&#34;/group/{id}/users&#34;)]</span>
+</span></span><span style="display:flex;"><span>IObservable&lt;&lt;List&lt;User&gt;&gt;GroupList(
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">    [Path(&#34;id&#34;)]</span> <span style="color:#8be9fd">int</span> groupId,
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">    [QueryMap]</span> Dictionary&lt;<span style="color:#8be9fd">string</span>, <span style="color:#8be9fd">string</span>&gt; options);
+</span></span></code></pre></div><h3 id="带body的请求">带BODY的请求</h3>
 <p>一个Body对象可以通过 [Body] 特性来完成带Body的请求。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b">[POST(&#34;/users/new&#34;)]</span>
-IObservable&lt;User&gt; CreateUser(
-<span style="color:#50fa7b">	[Body]</span> User user);
-</code></pre></div><p>该object对象将使用RestAdapter中指定的转换器Convert来把对象转换成string并发往服务端，默认情况下，RestAdapter将使用<code>DefalutConverter(Implemented by Newtonsoft.json)</code> 来完成转换任务。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b">[POST(&#34;/users/new&#34;)]</span>
+</span></span><span style="display:flex;"><span>IObservable&lt;User&gt; CreateUser(
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">	[Body]</span> User user);
+</span></span></code></pre></div><p>该object对象将使用RestAdapter中指定的转换器Convert来把对象转换成string并发往服务端，默认情况下，RestAdapter将使用<code>DefalutConverter(Implemented by Newtonsoft.json)</code> 来完成转换任务。</p>
 <h3 id="form-encoded请求">FORM ENCODED请求</h3>
 <p>方法也可以声明为发送form-encoded 数据的请求。<br>
 当有参数使用[Field]特性标识时，[Field]中的字符将作为健，参数值将作为值来发送form-encoded数据。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b">[POST(&#34;/user/edit&#34;)]</span>
-IObservable&lt;User&gt; UpdateUser(
-<span style="color:#50fa7b">	[Field(&#34;first_name&#34;)]</span> <span style="color:#8be9fd">string</span> first,
-<span style="color:#50fa7b">	[Field(&#34;last_name&#34;)]</span> <span style="color:#8be9fd">string</span> last);
-</code></pre></div><h3 id="header-的组装">HEADER 的组装</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b">[POST(&#34;/user/edit&#34;)]</span>
+</span></span><span style="display:flex;"><span>IObservable&lt;User&gt; UpdateUser(
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">	[Field(&#34;first_name&#34;)]</span> <span style="color:#8be9fd">string</span> first,
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">	[Field(&#34;last_name&#34;)]</span> <span style="color:#8be9fd">string</span> last);
+</span></span></code></pre></div><h3 id="header-的组装">HEADER 的组装</h3>
 <p>可以使用 [Headers] 特性来标识静态的Header数据</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b">[Headers(&#34;Cache-Control: max-age=640000&#34;)]</span>
-<span style="color:#50fa7b">[GET(&#34;/widget/list&#34;)]</span>
-IObservable&lt;List&lt;Widget&gt;&gt; WidgetList();
-</code></pre></div><pre><code>[Headers({
-    &quot;Accept: application/vnd.github.v3.full+json&quot;,
-    &quot;User-Agent: Retrofit-Sample-App&quot;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b">[Headers(&#34;Cache-Control: max-age=640000&#34;)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">[GET(&#34;/widget/list&#34;)]</span>
+</span></span><span style="display:flex;"><span>IObservable&lt;List&lt;Widget&gt;&gt; WidgetList();
+</span></span></code></pre></div><pre tabindex="0"><code>[Headers({
+    &#34;Accept: application/vnd.github.v3.full+json&#34;,
+    &#34;User-Agent: Retrofit-Sample-App&#34;
 })]
-[GET(&quot;/users/{username}&quot;)]
+[GET(&#34;/users/{username}&#34;)]
 IObservable&lt;User&gt; GetUser(
-	[Path(&quot;username&quot;)] string username);
+	[Path(&#34;username&#34;)] string username);
 </code></pre><p>注意：Headers没有同健覆盖功能，即使Headers的健相同也会一起发送出去。<br>
 如果需要动态组装Header，可以在参数中用<code>[Header]</code>来标识这是一个动态参数化的Header组装。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#50fa7b">[GET(&#34;/user&#34;)]</span>
-IObservable&lt;User&gt; GetUser(
-<span style="color:#50fa7b">	[Header(&#34;Authorization&#34;)]</span> <span style="color:#8be9fd">string</span> authorization)
-</code></pre></div><h2 id="retrofit-配置">Retrofit 配置</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span><span style="color:#50fa7b">[GET(&#34;/user&#34;)]</span>
+</span></span><span style="display:flex;"><span>IObservable&lt;User&gt; GetUser(
+</span></span><span style="display:flex;"><span><span style="color:#50fa7b">	[Header(&#34;Authorization&#34;)]</span> <span style="color:#8be9fd">string</span> authorization)
+</span></span></code></pre></div><h2 id="retrofit-配置">Retrofit 配置</h2>
 <p><code>RestApater</code> 类负责将API接口转换成可以调用方法的对象。默认情况下Retrofit会自动配置好供你调用，当然所有的配置都是可以自定义的，这是为了方便扩展以及功能细分。</p>
 <h3 id="序列化和反序列化配置">序列化和反序列化配置</h3>
 <p>Retrofit默认使用 Newtonsoft.json 库来完成序列化和反序列化。<br>
 如果API接口返回的结构不能被默认配置的解析库解析，或者你想要用别的库来完成转换工作，那么这个时候，你只需要创建一个类并实现 <code>Converter</code> 接口，并在Adapter的<code>Setup()</code>中指定这个实例来完成转换的工作即可。</p>
 <h2 id="结合rx的异步网络请求实践">结合Rx的异步网络请求实践</h2>
-<pre><code> var observable = RxRestBestHttpClient.Instance.RxGetList(&quot;square&quot;, &quot;retrofit&quot;);//声明可观察对象
+<pre tabindex="0"><code> var observable = RxRestBestHttpClient.Instance.RxGetList(&#34;square&#34;, &#34;retrofit&#34;);//声明可观察对象
 	 observable
             .SubscribeOn(Scheduler.ThreadPool) //将网络请求切换到预定义的线程池中的某个线程执行
             .ObserveOnMainThread()  //请求完成时，在主线程呈现数据
             .Subscribe(
                 data =&gt;
                 {
-                    Debug.LogFormat(&quot;Receive on threadId:{0}&quot;, Thread.CurrentThread.ManagedThreadId);
-                    Debug.Log(&quot;Retrofit Success:&quot; + data[0].testField);
+                    Debug.LogFormat(&#34;Receive on threadId:{0}&#34;, Thread.CurrentThread.ManagedThreadId);
+                    Debug.Log(&#34;Retrofit Success:&#34; + data[0].testField);
                 },
                 error =&gt;
                 {
-                    Debug.LogError(&quot;Retrofit Error:&quot; + error);
+                    Debug.LogError(&#34;Retrofit Error:&#34; + error);
                 });
 </code></pre><p>定义可观察对象后observable之后，通过observable.Subcribe(<code>Action&lt;T&gt;</code> onNext, <code>Action&lt;Exception&gt;</code> onError)的调用后，网络请求才会发送出去，默认情况下，如果没有调用<code>SubscribeOn()</code>和<code>ObserveOn()</code>，请求线程跟回调线程都是在主线程完成。</p>
 <h3 id="schedulerlinq多线程请求与切换">Scheduler+Linq多线程请求与切换</h3>
@@ -449,7 +404,7 @@ IObservable&lt;User&gt; GetUser(
   <img src="./parall.png" alt="Alt text">
 
 </p>
-<pre><code>var quert = from x in ObserableWWW.Get(&quot;http://github.com&quot;);
+<pre tabindex="0"><code>var quert = from x in ObserableWWW.Get(&#34;http://github.com&#34;);
 			from y in ObserableWWW.Get(x)
 			from z in ObserableWWW.Get(y)
 			select new {x,y,z}
@@ -460,9 +415,9 @@ query.Subcribe(x=&gt;Debug.Log(x),ex=&gt;Debug.LogException(ex));
   <img src="./parall3.png" alt="Alt text">
 
 </p>
-<pre><code>var query = Observable.Zip(
-			ObserableWWW.Get(&quot;http://github.com&quot;)),
-			ObserableWWW.Get(&quot;http://google.com&quot;)),
+<pre tabindex="0"><code>var query = Observable.Zip(
+			ObserableWWW.Get(&#34;http://github.com&#34;)),
+			ObserableWWW.Get(&#34;http://google.com&#34;)),
 			(github,google) =&gt; new {goole,bing});
 			
 query.Subcribe(x=&gt;Debug.Log(x),ex=&gt;Debug.LogException(ex));
@@ -482,11 +437,11 @@ query.Subcribe(x=&gt;Debug.Log(x),ex=&gt;Debug.LogException(ex));
 </li>
 <li>用BestHttpImpl实例作为RestAdapter中的SetHttpImpl()方法的返回值.</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"> <span style="color:#ff79c6">protected</span> <span style="color:#ff79c6">override</span> HttpImplement SetHttpImpl()
-        {
-            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> BestHttpImpl();
-        }
-</code></pre></div><h3 id="与-unitywebrequest的结合">与 UNITYWEBREQUEST的结合</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span> <span style="color:#ff79c6">protected</span> <span style="color:#ff79c6">override</span> HttpImplement SetHttpImpl()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> BestHttpImpl();
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><h3 id="与-unitywebrequest的结合">与 UNITYWEBREQUEST的结合</h3>
 <blockquote>
 <p>要想使用 UnityWebRequest,  unity 版本必须是5.4或更高.</p>
 </blockquote>
@@ -499,11 +454,11 @@ query.Subcribe(x=&gt;Debug.Log(x),ex=&gt;Debug.LogException(ex));
 </li>
 <li>用UnityWebRequestImpl实例作为RestAdapter中的SetHttpImpl()方法的返回值.</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"> <span style="color:#ff79c6">protected</span> <span style="color:#ff79c6">override</span> HttpImplement SetHttpImpl()
-        {
-            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> UnityWebRequestImpl();
-        }
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cs" data-lang="cs"><span style="display:flex;"><span> <span style="color:#ff79c6">protected</span> <span style="color:#ff79c6">override</span> HttpImplement SetHttpImpl()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> UnityWebRequestImpl();
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div>
 
                 
 
@@ -517,16 +472,30 @@ query.Subcribe(x=&gt;Debug.Log(x),ex=&gt;Debug.LogException(ex));
                     </li>
                     
                 </ul>
-
                 
-<div id="disqus-comment"></div>
-
-
 
             </div>
+
+            
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -603,7 +572,7 @@ query.Subcribe(x=&gt;Debug.Log(x),ex=&gt;Debug.LogException(ex));
             
                 </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Weichao Wang 2021
+                    Copyright &copy; Weichao Wang 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -660,6 +629,67 @@ query.Subcribe(x=&gt;Debug.Log(x),ex=&gt;Debug.LogException(ex));
 
 
 
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
 
 
 </body>

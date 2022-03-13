@@ -38,13 +38,13 @@
 
     <link rel="canonical" href="/top/about/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
     
     <link rel="stylesheet" href="/css/zanshang.css">
@@ -72,7 +72,9 @@
 
 
 
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -193,6 +195,11 @@
 <h6 id="application-engineer-emsp-201307---201406">Application Engineer   2013.07 - 2014.06</h6>
 <p>    擅长：NI公司的软/硬件技术支持与技能培训</p>
 <h2 id="项目经验">项目经验</h2>
+<h3 id="虚拟直播偶像--emsp-2022---至今">虚拟直播偶像    2022 - 至今</h3>
+<ul>
+<li>产品介绍：使用单目摄像头，通过AI识别人体姿态，实时驱动3D人偶进行姿态跟踪和面部表情映射。</li>
+<li>项目经验：专注解决孵化项目的疑难及优化问题。对神经网络输出的landmark数据进行二次优化，平衡抖动和延时问题；通过物理引擎驱动人偶的方案，解决直接映射人偶姿态导致的穿模问题。</li>
+</ul>
 <h3 id="虚拟实验室httpsvlabeduyuncn--emsp-2021---至今"><a href="https://vlab.eduyun.cn/">虚拟实验室</a>    2021 - 至今</h3>
 <p>
   <img src="vlab.png" alt="image">
@@ -218,7 +225,7 @@
 </p>
 <ul>
 <li>产品介绍：应用3D、AI等技术，集阅读、释义、评测、互动于一体的数字化课本。</li>
-<li>项目经验：独立负责整体的UI框架，带SQLite缓存的REST API框架，以及批注等业务模块。自研Retrofit4Unity插件，上架<a href="https://assetstore.unity.com/packages/tools/network/retrofit-for-unity-90660">AssetStore</a>并获得一致好评。这是一款用于简化API对接流程的网络请求框架，并且支持扩展任意的网络模块，在公司内部得到广泛应用。</li>
+<li>项目经验：独立负责整体的UI框架，带SQLite缓存的REST API框架，以及批注等业务模块。自研Retrofit4Unity插件，上架<a href="https://assetstore.unity.com/packages/tools/network/retrofit-for-unity-90660">AssetStore</a>并获得一致好评。这是一款用于简化API对接流程、多线程友好的网络请求框架，并且支持扩展任意的网络模块，在公司内部得到广泛应用。</li>
 </ul>
 <h3 id="vr创想httpsvr101com-emsp2016---2017"><a href="https://vr.101.com/">VR创想+</a>  2016 - 2017</h3>
 <p>
@@ -231,8 +238,6 @@
 </ul>
 
                 
-<div id="disqus-comment"></div>
-
 
 
             </div>
@@ -315,7 +320,7 @@
             
                 </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Weichao Wang 2021
+                    Copyright &copy; Weichao Wang 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -372,6 +377,67 @@
 
 
 
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
 
 
 </body>
